@@ -97,13 +97,13 @@
 	    <repository>
 	      <id>nexus</id>
 	      <name>ACADA Learning Releases Nexus Repository</name>
-	      <url>http://54.145.118.234:8081/repository/eco-release/</url>
+	      <url>http://35.173.211.243:8081/repository/zenith-release/</url>
 	    </repository>
 	    
 	    <snapshotRepository>
 	      <id>nexus</id>
 	      <name>ACADA Learning Snapshot Nexus Repository </name>
-	      <url>http://54.145.118.234:8081/repository/eco-snapshot/</url>
+	      <url>http://35.173.211.243:8081/repository/zenith-snapshot/</url>
 	    </snapshotRepository>
 	    
 	</distributionManagement>

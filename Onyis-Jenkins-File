@@ -1,0 +1,64 @@
+pipeline{
+    agent any
+    tools{
+        maven "maven3.8.4"
+    }
+    stages{
+        stage("1.Initiation"){
+            steps{
+                sh "echo start of zenith app build"
+            }
+        }
+        stage("2.Git clone"){
+            steps{
+                sh "echo git clone script from github"
+                git "https://github.com/onyii-syl/web-app.git"
+            }
+        }
+        stage("3.Build"){
+            steps{
+              sh "echo build script with maven"
+              sh "mvn clean package"
+            }
+        }
+        stage("4.Code Quality"){
+            steps{
+                sh "echo code quality check with soarqube"
+                sh "mvn sonar:sonar"
+            }
+        }
+        stage("5.Artifactory"){
+            steps{
+                sh "echo backup artifact in nexus"
+                sh "mvn deploy"
+            }
+        }
+        stage("6. DeploytoUAT"){
+            steps{
+                sh "echo deploy to tomcat for user acceptance testing"
+                deploy adapters: [tomcat9(credentialsId: 'tomcat-webapp-cred', path: '', url: 'http://34.236.157.221:8080/')], contextPath: null, war: 'target/*.war'
+            }
+            
+        }
+        stage("6.Approval"){
+            steps{
+                sh "echo approval needed"
+                timeout(time:5, unit:'DAYS'){
+                    input message:"approval needed"
+                }
+            }
+        }
+        stage("7.DeploytoProd"){
+            steps{
+                sh "echo deploy to production after approval has been granted"
+                deploy adapters: [tomcat9(credentialsId: 'tomcat-webapp-cred', path: '', url: 'http://34.236.157.221:8080/')], contextPath: null, war: 'target/*.war'
+            }
+        }
+        stage("8.EmailNotification"){
+            steps{
+                sh "echo email notification for success"
+                emailext body: 'The project build is a success. Glory be to God', recipientProviders: [developers()], subject: 'the project build is a success', to: 'devops'
+            }
+        }
+    }
+}    
